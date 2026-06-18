@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Snake Game</title>
+    <style>
+        /* Modern, clean aesthetic with a dark terminal theme */
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: #4caf50;
+        }
+
+        #score-board {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            background-color: #2d2d2d;
+            padding: 8px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* The Game Grid Canvas Styling */
+        canvas {
+            background-color: #111111;
+            border: 4px solid #333333;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #instructions {
+            margin-top: 15px;
+            color: #888888;
+            font-size: 0.9rem;
+        }
+
+        #game-over-text {
+            color: #ff5252;
+            font-weight: bold;
+            visibility: hidden;
+            margin-top: 10px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SNAKE</h1>
+    <div id="score-board">Score: <span id="score">0</span></div>
+    
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    
+    <div id="game-over-text">GAME OVER! Press Spacebar to Restart</div>
+    <div id="instructions">Use the Arrow Keys to steer.</div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreDisplay = document.getElementById("score");
+        const gameOverText = document.getElementById("game-over-text");
+
+        // Grid configurations 
+        const gridSize = 20; 
+        const tileCount = canvas.width / gridSize;
+
+        // Game state variables
+        let snake = [];
+        let food = { x: 0, y: 0 };
+        let dx = gridSize; // Horizontal velocity (moving right initially)
+        let dy = 0;        // Vertical velocity
+        let score = 0;
+        let gameInterval;
+        let isGameOver = false;
+        let changingDirection = false; // Flag to prevent rapid double-taps causing self-collision
+
+        // Start the game loop
+        initGame();
+
+        function initGame() {
+            // Reset snake to 3 blocks long in the middle of the screen
+            snake = [
+                { x: gridSize * 5, y: gridSize * 5 },
+                { x: gridSize * 4, y: gridSize * 5 },
+                { x: gridSize * 3, y: gridSize * 5 }
+            ];
+            dx = gridSize;
+            dy = 0;
+            score = 0;
+            scoreDisplay.textContent = score;
+            isGameOver = false;
+            gameOverText.style.visibility = "hidden";
+            
+            generateFood();
+            
+            // Clear existing loops if any, and set engine speed (100ms per frame)
+            clearInterval(gameInterval);
+            gameInterval = setInterval(gameLoop, 100);
+        }
+
+        // Main game engine tick
+        function gameLoop() {
+            if (checkGameOver()) {
+                isGameOver = true;
+                gameOverText.style.visibility = "visible";
+                clearInterval(gameInterval);
+                return;
+            }
+
+            changingDirection = false;
+            clearCanvas();
+            drawFood();
+            moveSnake();
+            drawSnake();
+        }
+
+        function clearCanvas() {
+            ctx.fillStyle = "#111111";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawSnake() {
+            snake.forEach((part, index) => {
+                // Style head differently from the body tail
+                ctx.fillStyle = index === 0 ? "#4caf50" : "#81c784";
+                ctx.strokeStyle = "#111111"; // Creates a clean grid gap separation
+                
+                ctx.fillRect(part.x, part.y, gridSize, gridSize);
+                ctx.strokeRect(part.x, part.y, gridSize, gridSize);
+            });
+        }
+
+        function moveSnake() {
+            // Create a new head position based on velocities
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+            snake.unshift(head); // Add new head to front
+
+            // Check if head shares the same coordinates as the food grid
+            const hasEatenFood = snake[0].x === food.x && snake[0].y === food.y;
+            if (hasEatenFood) {
+                score += 10;
+                scoreDisplay.textContent = score;
+                generateFood();
+            } else {
+                snake.pop(); // Remove the last tail element to simulate moving forward
+            }
+        }
+
+        function generateFood() {
+            // Get random grids coordinates safely inside boundaries
+            food.x = Math.floor(Math.random() * tileCount) * gridSize;
+            food.y = Math.floor(Math.random() * tileCount) * gridSize;
+
+            // Prevent food from spawning on top of the snake body
+            snake.forEach(part => {
+                const hasSpawnedOnSnake = part.x === food.x && part.y === food.y;
+                if (hasSpawnedOnSnake) generateFood();
+            });
+        }
+
+        function drawFood() {
+            ctx.fillStyle = "#ff5252"; // Vibrant neon red
+            ctx.fillRect(food.x, food.y, gridSize, gridSize);
+        }
+
+        function checkGameOver() {
+            // 1. Boundary Wall Collisions
+            const hitLeftWall = snake[0].x < 0;
+            const hitRightWall = snake[0].x >= canvas.width;
+            const hitToptWall = snake[0].y < 0;
+            const hitBottomWall = snake[0].y >= canvas.height;
+
+            if (hitLeftWall || hitRightWall || hitToptWall || hitBottomWall) return true;
+
+            // 2. Self-Cannibalism Collisions (Skip index 0 which is the head itself)
+            for (let i = 4; i < snake.length; i++) {
+                if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true;
+            }
+
+            return false;
+        }
+
+        // Keyboard inputs processing
+        document.addEventListener("keydown", changeDirection);
+
+        function changeDirection(event) {
+            const keyPressed = event.keyCode;
+            
+            // Keyboard Key Code Maps
+            const LEFT_KEY = 37;
+            const UP_KEY = 38;
+            const RIGHT_KEY = 39;
+            const DOWN_KEY = 40;
+            const SPACEBAR = 32;
+
+            // Handle Restart condition
+            if (keyPressed === SPACEBAR && isGameOver) {
+                initGame();
+                return;
+            }
+
+            if (changingDirection) return;
+
+            // Validate and shift directional vectors while locking reverse switches
+            const goingUp = dy === -gridSize;
+            const goingDown = dy === gridSize;
+            const goingRight = dx === gridSize;
+            const goingLeft = dx === -gridSize;
+
+            if (keyPressed === LEFT_KEY && !goingRight) {
+                dx = -gridSize;
+                dy = 0;
+                changingDirection = true;
+            }
+            if (keyPressed === UP_KEY && !goingDown) {
+                dx = 0;
+                dy = -gridSize;
+                changingDirection = true;
+            }
+            if (keyPressed === RIGHT_KEY && !goingLeft) {
+                dx = gridSize;
+                dy = 0;
+                changingDirection = true;
+            }
+            if (keyPressed === DOWN_KEY && !goingUp) {
+                dx = 0;
+                dy = gridSize;
+                changingDirection = true;
+            }
+        }
+    </script>
+</body>
+</html>

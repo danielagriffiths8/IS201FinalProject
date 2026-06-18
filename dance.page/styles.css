@@ -1,0 +1,136 @@
+/* 1. Body Style Definition (Custom Background & Typography) */
+body {
+    background-color: #fcf8f6; /* Soft, elegant blush/cream custom background */
+    font-family: 'Georgia', serif; /* Classic, professional serif font family */
+    color: #2c2523; /* Deep charcoal/brown font color for high contrast and readability */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* 2. Div 1: Header Section Layout & Style */
+#header-section {
+    background-color: #4a3731; /* Deep espresso tone for visual contrast */
+    color: #ffffff; /* White font color for header text */
+    text-align: center;
+    padding: 60px 20px;
+}
+
+#header-section h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+/* 3. Div 2: Main Content Layout & Style */
+#main-content {
+    max-width: 800px;
+    margin: 40px auto; /* Centers the block on the page */
+    padding: 0 20px;
+    background-color: #ffffff; /* Crisp white background for the text block */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Soft shadow for a modern look */
+    border-radius: 8px;
+    padding: 30px;
+}
+
+/* 4. Div 3: Performance Vault Layout & Style */
+#performance-vault {
+    background-color: #e8dedb; /* Muted rose-taupe background block */
+    text-align: center;
+    padding: 50px 20px;
+    margin-top: 60px;
+}
+
+/* Additional complementary styles to ensure a clean, creative aesthetic */
+.ballet-img {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 4px;
+}
+
+iframe {
+    max-width: 100%;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin: 20px 0;
+}
+
+.jump-link {
+    display: inline-block;
+    margin-top: 15px;
+    color: #dfb2a4; /* Soft rose accent color */
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 2px solid #dfb2a4;
+    transition: color 0.3s ease;
+}
+
+.jump-link:hover {
+    color: #ffffff;
+    border-bottom-color: #ffffff;
+}
+
+ol {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.footer-text {
+    font-size: 0.85em;
+    color: #70625e;
+    margin-top: 40px;
+}
+
+.game-btn {
+    display: inline-block;
+    background-color: #4a3731; /* Matches your header color */
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.game-btn:hover {
+    background-color: #dfb2a4; /* Soft rose accent color on hover */
+    color: #4a3731;
+}
+
+.resume-button {
+    display: inline-block;
+    background-color: #4a3731; /* Matches your header color */
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.resume-button:hover {
+    background-color: #dfb2a4; /* Soft rose accent color on hover */
+    color: #4a3731;
+}
+
+.tableau-btn {
+    display: inline-block;
+    background-color: #4a3731; /* Matches your header color */
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.tableau-btn:hover {
+    background-color: #dfb2a4; /* Soft rose accent color on hover */
+    color: #4a3731;
+}
